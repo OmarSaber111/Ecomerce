@@ -1,0 +1,56 @@
+<div class="container mt-4">
+
+  <!-- Search & Sort -->
+  <div class="d-flex justify-content-between mb-3">
+<input #searchInput type="text" class="form-control w-50" placeholder="Search products..."
+       (input)="onSearchChange(searchInput.value)">
+
+    <select class="form-select w-25" (change)="onSortChange($event)">
+      <option value="">Sort by Name</option>
+      <option value="PriceAce">Price Ascending</option>
+      <option value="PriceDce">Price Descending</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center my-5">
+    <h5>Loading...</h5>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="row">
+    <div *ngFor="let p of products" class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img [src]="'https://localhost:7151' + p.imagePath?.[0]" class="card-img-top  product-img" />
+        <div class="card-body">
+          <h5 class="card-title">{{ p.name }}</h5>
+          <p class="card-text">
+            Category: {{ p.category }}<br>
+            Price: {{ p.price | currency }}<br>
+            Minimum Quantity: {{ p.minimumQuantity }}<br>
+            Discount: {{ p.discountRate }}%
+          </p>
+          <button class="btn btn-primary me-2">Add to Cart</button> 
+          <button class="btn btn-success me-2">Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="pageNumber === 1">
+        <button class="page-link" (click)="goToPage(pageNumber - 1)">Previous</button>
+      </li>
+      <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="pageNumber === i + 1">
+        <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="pageNumber === totalPages">
+        <button class="page-link" (click)="goToPage(pageNumber + 1)">Next</button>
+      </li>
+    </ul>
+  </nav>
+
+</div>

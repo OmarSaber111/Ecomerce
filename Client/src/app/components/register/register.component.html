@@ -1,0 +1,46 @@
+<div class="card mt-5 mx-auto" style="max-width: 400px; padding: 20px;">
+    <h2 class="text-center mb-4">Register New User</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <div class="mb-3">
+            <label>Username</label>
+            <input class="form-control" formControlName="userName" />
+            <div class="text-danger" *ngIf="form.get('userName')?.touched && form.get('userName')?.invalid">
+                Username is required (at least 3 characters)
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input class="form-control" formControlName="email" />
+            <div class="text-danger" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+                A valid email is required
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" class="form-control" formControlName="password" />
+            <div class="text-danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+                Password is required (at least 6 characters)
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Confirm Password</label>
+            <input type="password" class="form-control" formControlName="confirmPassword" />
+            <div class="text-danger" *ngIf="form.errors?.['mismatch']">
+                Passwords do not match
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+            {{ loading ? 'Registering...' : 'Register' }}
+        </button>
+
+        <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+        <div *ngIf="success" class="alert alert-success mt-2">{{ success }}</div>
+
+    </form>
+</div>

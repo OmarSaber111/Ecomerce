@@ -1,0 +1,27 @@
+<div class="card mt-5 mx-auto" style="max-width: 400px; padding: 20px;">
+  <h2 class="text-center mb-4">Login</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <div class="mb-3">
+      <label>Username</label>
+      <input class="form-control" formControlName="userName" />
+      <div class="text-danger" *ngIf="form.get('userName')?.touched && form.get('userName')?.invalid">
+        Username is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label>Password</label>
+      <input type="password" class="form-control" formControlName="password" />
+      <div class="text-danger" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        Password is required
+      </div>
+    </div>
+
+    <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+      {{ loading ? 'Logging in...' : 'Login' }}
+    </button>
+
+    <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
+  </form>
+</div>
