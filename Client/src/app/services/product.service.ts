@@ -10,7 +10,7 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getAllProducts(pageNumber = 1, pageSize = 3, search = '', sort = ''): Observable<ProductResponse> {
+  getAllProducts(pageNumber = 1, pageSize = 3, sort = '', search = ''): Observable<ProductResponse> {
     let params = new HttpParams()
       .set('pagenumber', pageNumber)
       .set('pagesize', pageSize);

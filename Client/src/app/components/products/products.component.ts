@@ -1,21 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { ProductResponse } from '../../models/product-response.model';
 
+class ProductParams {
+  searchTerm: string = '';
+  selectedSortOption: string = '';
+  pageNumber: number = 1;
+  pageSize: number = 3;
+}
+
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrl: './products.component.scss'
+  styleUrls: ['./products.component.scss']
 })
-export class ProductsComponent {
- products: Product[] = [];
-  pageNumber = 1;
-  pageSize = 3;
+export class ProductsComponent implements OnInit {
+  products: Product[] = [];
   totalPages = 0;
-  sort = '';
-  search = '';
   loading = false;
+
+  productParams = new ProductParams();
+
+  sortOptions = [
+    { name: 'Name', value: '' },
+    { name: 'Price Ascending', value: 'PriceAce' },
+    { name: 'Price Descending', value: 'PriceDce' }
+  ];
 
   constructor(private productService: ProductService) {}
 
@@ -25,42 +36,48 @@ export class ProductsComponent {
 
   loadProducts() {
     this.loading = true;
-    this.productService.getAllProducts(this.pageNumber, this.pageSize, this.sort, this.search)
-      .subscribe({
-        next: (res: ProductResponse) => {
-          this.products = res.products;
-          this.pageNumber = res.pageNumber;
-          this.pageSize = res.pageSize;
-          this.totalPages = res.totalPages;
-          this.loading = false;
-        },
-        error: () => this.loading = false
-      });
+    this.productService.getAllProducts(
+      this.productParams.pageNumber,
+      this.productParams.pageSize,
+      this.productParams.selectedSortOption,
+      this.productParams.searchTerm
+    ).subscribe({
+      next: (res: ProductResponse) => {
+        this.products = res.products;
+        this.productParams.pageNumber = res.pageNumber;
+        this.productParams.pageSize = res.pageSize;
+        this.totalPages = res.totalPages;
+        this.loading = false;
+      },
+      error: () => this.loading = false
+    });
   }
 
   onSortChange(event: Event) {
     const select = event.target as HTMLSelectElement;
-    this.sort = select.value;
+    this.productParams.selectedSortOption = select.value;
+    this.productParams.pageNumber = 1; // مهم
     this.loadProducts();
   }
 
   onSearchChange(value: string) {
-    this.search = value;
+    this.productParams.searchTerm = value;
+    this.productParams.pageNumber = 1; // مهم
     this.loadProducts();
   }
 
   goToPage(page: number) {
     if (page < 1 || page > this.totalPages) return;
-    this.pageNumber = page;
+    this.productParams.pageNumber = page;
     this.loadProducts();
   }
 
-  deleteProduct(id: number) {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+  resetFilters() {
+    this.productParams = new ProductParams();
+    this.loadProducts();
+  }
 
-    this.productService.deleteProduct(id).subscribe({
-      next: () => this.loadProducts(),
-      error: err => alert(err)
-    });
+  get totalPagesArray() {
+    return Array(this.totalPages);
   }
 }
